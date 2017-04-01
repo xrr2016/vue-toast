@@ -27,9 +27,31 @@ Toast.install = (Vue, options) => {
     setTimeout(() => {
       body.removeChild(tpl)
     }, _options.duration)
-    ['bottom', 'center', 'top'].forEach(type => {
+
+    ;['bottom', 'center', 'top'].forEach(type => {
       Vue.prototype.$toast[type] = (msg) => {
         return Vue.prototype.$toast(msg, type)
+      }
+    })
+
+    Vue.prototype.$loading = (msg, type) => {
+      const load = $$('loading-mask')
+      if (type === 'close') {
+        load && body.removeChild(load)
+      } else {
+        if (load) {
+          return
+        }
+        const LoadTpl = Vue.extend({
+          template: `<div>${msg}</div>`
+        })
+        const tpl = new LoadTpl().$mount().$el
+        body.appendChild(tpl)
+      }
+    }
+    ['open', 'close'].forEach(type => {
+      Vue.prototype.$loading[type] = (msg) => {
+        return Vue.prototype.$loading(msg, type)
       }
     })
     function $$ (ele) {
